@@ -7,6 +7,10 @@ const app = require("express")();
 // Fake a host to think this is an express app
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Server started on port ${process.env.PORT || 3000}`);
+  // Scrape data from table & edit it
+  updateDatabase();
+  // Run every minute
+  setInterval(updateDatabase, 10 * 1000);
 });
 // Website
 const url = "https://www.worldometers.info/coronavirus/";
@@ -34,8 +38,3 @@ const updateDatabase = () => {
     })
     .catch(err => console.log(err.message.red.inverse));
 };
-
-// Scrape data from table & edit it
-updateDatabase();
-// Run every minute
-setInterval(updateDatabase, 60 * 1000);
