@@ -33,7 +33,7 @@ const updateDatabase = () => {
       // Prevent space use
       await Data.deleteMany();
       await Data.create(realData);
-      fs.writeFileSync("./scrapedWebsites.json", JSON.stringify(realData));
+      // fs.writeFileSync("./scrapedWebsites.json", JSON.stringify(realData));
       console.log("Write complete".green.inverse);
     })
     .catch(err => console.log(err.message.red.inverse));
