@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 // Database
 const dbUri =
-  "mongodb+srv://Admin:escape123@cluster0-r1o03.mongodb.net/test?retryWrites=true&w=majority";
+  "mongodb+srv://Admin:escape123@cluster0-r1o03.mongodb.net/statistics?retryWrites=true&w=majority";
 mongoose.connect(dbUri);
 
 // Model
