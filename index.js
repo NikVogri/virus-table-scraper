@@ -15,15 +15,16 @@ const updateDatabase = () => {
       const data = JSON.stringify(res)
         .replace(/Country,Other/g, "country")
         .replace(/Serious,Critical/g, "critical");
-      const filtered = JSON.parse(data)[0];
-      filtered.forEach(element => {
+      const realData = JSON.parse(data)[0];
+      // Remove redundant information
+      realData.forEach(element => {
         delete element["Tot Cases/1M pop"];
         delete element["Tot Deaths/1M pop"];
       });
       // Prevent space use
       await Data.deleteMany();
-      await Data.create(filtered);
-      fs.writeFileSync("./scrapedWebsites.json", JSON.stringify(filtered));
+      await Data.create(realData);
+      fs.writeFileSync("./scrapedWebsites.json", JSON.stringify(realData));
       console.log("Write complete".green.inverse);
     })
     .catch(err => console.log(err.message.red.inverse));
@@ -31,4 +32,5 @@ const updateDatabase = () => {
 
 // Scrape data from table & edit it
 updateDatabase();
+// Run every minute
 setInterval(updateDatabase, 60 * 1000);
