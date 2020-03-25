@@ -10,7 +10,7 @@ app.listen(process.env.PORT || 3000, () => {
   // Scrape data from table & edit it
   updateDatabase();
   // Run every minute
-  setInterval(updateDatabase, 10 * 1000);
+  setInterval(updateDatabase, 60 * 1000);
 });
 // Website
 const url = "https://www.worldometers.info/coronavirus/";
