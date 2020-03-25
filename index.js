@@ -2,7 +2,12 @@ const fs = require("fs");
 const colors = require("colors");
 const scraper = require("table-scraper");
 const Data = require("./database");
+const app = require("express")();
 
+// Fake a host to think this is an express app
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server started on port ${process.env.PORT || 3000}`);
+});
 // Website
 const url = "https://www.worldometers.info/coronavirus/";
 

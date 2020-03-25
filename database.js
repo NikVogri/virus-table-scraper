@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
 // Database
-const dbUri = "<<ENTER YOUR OWN MONGO URI>>";
+const dbUri =
+  "mongodb+srv://Admin:escape123@cluster0-r1o03.mongodb.net/test?retryWrites=true&w=majority";
 mongoose.connect(dbUri);
 
 // Model
