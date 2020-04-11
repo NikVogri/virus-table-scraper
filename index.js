@@ -10,7 +10,7 @@ app.listen(process.env.PORT || 3000, () => {
   // Scrape data from table & edit it
   updateDatabase();
   // Run every minute
-  setInterval(updateDatabase, 60 * 1000);
+  setInterval(updateDatabase, 60 * 10000);
 });
 // Website
 const url = "https://www.worldometers.info/coronavirus/";
@@ -19,16 +19,19 @@ const url = "https://www.worldometers.info/coronavirus/";
 const updateDatabase = () => {
   scraper
     .get(url)
-    .then(async res => {
+    .then(async (res) => {
       console.log("Fetch completed".yellow.inverse);
       const data = JSON.stringify(res)
         .replace(/Country,Other/g, "country")
         .replace(/Serious,Critical/g, "critical");
       const realData = JSON.parse(data)[0];
       // Remove redundant information
-      realData.forEach(element => {
+      realData.forEach((element) => {
         delete element["Tot Cases/1M pop"];
         delete element["Tot Deaths/1M pop"];
+        if (!element.country) {
+          delete element;
+        }
       });
       // Prevent space use
       await Data.deleteMany();
@@ -36,5 +39,5 @@ const updateDatabase = () => {
       // fs.writeFileSync("./scrapedWebsites.json", JSON.stringify(realData));
       console.log("Write complete".green.inverse);
     })
-    .catch(err => console.log(err.message.red.inverse));
+    .catch((err) => console.log(err.message.red.inverse));
 };

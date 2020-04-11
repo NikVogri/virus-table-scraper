@@ -8,41 +8,41 @@ mongoose.connect(dbUri);
 // Model
 const dataSchema = new mongoose.Schema({
   country: {
-    required: true,
-    type: String
+    required: false,
+    type: String,
   },
   TotalCases: {
     required: true,
-    type: String
+    type: String,
   },
   NewCases: {
     required: false,
-    type: String
+    type: String,
   },
   TotalDeaths: {
     required: false,
-    type: String
+    type: String,
   },
   NewDeaths: {
     required: false,
-    type: String
+    type: String,
   },
   TotalRecovered: {
     required: false,
-    type: String
+    type: String,
   },
   ActiveCases: {
     required: true,
-    type: String
+    type: String,
   },
   critical: {
     required: false,
-    type: String
+    type: String,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model("Data", dataSchema);
