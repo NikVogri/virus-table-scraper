@@ -8,7 +8,7 @@ mongoose.connect(dbUri);
 // Model
 const dataSchema = new mongoose.Schema({
   country: {
-    required: false,
+    required: true,
     type: String,
   },
   TotalCases: {

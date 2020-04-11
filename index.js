@@ -26,13 +26,18 @@ const updateDatabase = () => {
         .replace(/Serious,Critical/g, "critical");
       const realData = JSON.parse(data)[0];
       // Remove redundant information
+      console.log(("length", realData.length));
       realData.forEach((element) => {
         delete element["Tot Cases/1M pop"];
         delete element["Tot Deaths/1M pop"];
-        if (!element.country) {
-          delete element;
+        delete element["Tests/\n1M pop"];
+        delete element["Deaths/1M pop"];
+        if (element.country == "Total:" || element.country == "") {
+          const index = realData.indexOf(element);
+          realData.splice(index, 1);
         }
       });
+      console.log(("length", realData.length));
       // Prevent space use
       await Data.deleteMany();
       await Data.create(realData);
