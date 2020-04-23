@@ -8,13 +8,13 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: "https://coronastatistics.netlify.app",
+    origin: process.env.SITE_URL,
     optionsSuccessStatus: 200,
   })
 );
 
 app.get("/", (req, res, next) => {
-  res.status(200);
+  res.status(200).json({ success: true });
   next();
 });
 
