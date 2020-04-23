@@ -6,7 +6,10 @@ const app = require("express")();
 const cors = require("cors");
 // Fake a host to think this is an express app
 
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  optionsSuccessStatus: 200
+}));
 
 app.get('/', (req, res, next){
     res.status(200);
