@@ -7,6 +7,12 @@ const cors = require("cors");
 // Fake a host to think this is an express app
 
 app.use(cors());
+
+app.use('*', (req, res, next){
+    res.status(200);
+    next();
+});
+
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Server started on port ${process.env.PORT || 3000}`);
   // Scrape data from table & edit it
