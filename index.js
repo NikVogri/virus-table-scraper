@@ -7,7 +7,7 @@ const cors = require("cors");
 // Fake a host to think this is an express app
 
 app.use(cors({
-  origin: '*',
+  origin: 'https://coronastatistics.netlify.app',
   optionsSuccessStatus: 200
 }));
 
