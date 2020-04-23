@@ -6,14 +6,16 @@ const app = require("express")();
 const cors = require("cors");
 // Fake a host to think this is an express app
 
-app.use(cors({
-  origin: 'https://coronastatistics.netlify.app',
-  optionsSuccessStatus: 200
-}));
+app.use(
+  cors({
+    origin: "https://coronastatistics.netlify.app",
+    optionsSuccessStatus: 200,
+  })
+);
 
-app.get('/', (req, res, next){
-    res.status(200);
-    next();
+app.get("/", (req, res, next) => {
+  res.status(200);
+  next();
 });
 
 app.listen(process.env.PORT || 3000, () => {
