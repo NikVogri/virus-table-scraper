@@ -8,7 +8,7 @@ const cors = require("cors");
 
 app.use(cors());
 
-app.get('*', (req, res, next){
+app.get('/', (req, res, next){
     res.status(200);
     next();
 });
