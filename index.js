@@ -1,10 +1,9 @@
-const fs = require("fs");
 const colors = require("colors");
 const scraper = require("table-scraper");
-const Schema = require("./database");
 const app = require("express")();
 const cors = require("cors");
-// Fake a host to think this is an express app
+const myql = require('mysql');
+const dbConnection = require('./database');
 
 app.use(
   cors({
@@ -26,25 +25,76 @@ app.listen(process.env.PORT || 3000, () => {
   // Run every 10 minutes
   setInterval(updateDatabase, 60 * 10000);
 });
+
 // Website
 const url = "https://www.worldometers.info/coronavirus/";
 
-// Get data and update database
+
 const updateDatabase = () => {
   scraper
     .get(url)
     .then(async (res) => {
       console.log("Starting scrape".yellow.inverse);
       const data = cleanData(res);
+      //console.log(data);
+      const countryData = data.countryData.map(country => getData(country));
+      const continentData = data.continentData.map(continent => getData(continent));
+      // Get array inside array from object for mysql insertion
+      const countryDataArray = countryData.map(countryObj => {
+        return Object.values(countryObj);
+      })
 
-      // Delete previous data
-      await Schema.Country.deleteMany();
-      await Schema.Continent.deleteMany();
-      // Update database with updated data
+      const continentDataArray = continentData.map(continentObj => {
+        return Object.values(continentObj);
+      })
 
-      await Schema.Country.create(data.countryData);
-      await Schema.Continent.create(data.continentData);
-      console.log("Write complete".green.inverse);
+      // Update database
+      dbConnection.connect();
+
+      // delete data from the same day
+      dbConnection.query('DELETE FROM countries WHERE DATE(created_at) = CURDATE()',
+      (err, res) => {
+        if (err) throw err;
+        console.log("Deleted country data for current day".yellow.inverse);
+      });
+
+      dbConnection.query('DELETE FROM continents WHERE DATE(created_at) = CURDATE()',
+      (err, res) => {
+        if (err) throw err;
+        console.log("Deleted continent data for current day".yellow.inverse);
+      });
+
+      const continentQuery = `INSERT INTO continents (
+      continent,
+      country,
+      totalCases,
+      newCases,
+      totalDeaths,
+      newDeaths,
+      activeCases,
+      casePerPop) VALUES ?`;
+
+      const countryQuery = `INSERT INTO countries (
+      continent,
+      country,
+      totalCases,
+      newCases,
+      totalDeaths,
+      newDeaths,
+      activeCases,
+      casePerPop) VALUES ?`;
+
+      dbConnection.query(continentQuery, [continentDataArray], (err, res) => {
+        if (err) throw err;
+        console.log("Write to continents complete".green.inverse);
+      })
+
+      dbConnection.query(countryQuery, [countryDataArray], (err, res) => {
+        if (err) throw err;
+        console.log("Write to countries complete".green.inverse);
+      })
+
+     dbConnection.end();
     })
     .catch((err) => console.log(err.message.red.inverse));
 };
@@ -77,24 +127,44 @@ const cleanData = (res) => {
   const cleanData = filthyData.filter(
     (el) => el.country !== "Total:" && el.country !== ""
   );
-  // fs.writeFileSync("./scrapedWebsites.json", JSON.stringify(cleanData));
 
-  // get continent data;
+  // remove continent data from country array
   const continents = [
-    "Europe",
-    "Africa",
-    "North America",
-    "Asia",
-    "South America",
-    "Oceania",
-    "World",
-  ];
-
-  const continentData = cleanData.filter((el) =>
-    continents.includes(el.country)
-  );
+  "Europe",
+  "Africa",
+  "North America",
+  "Asia",
+  "South America",
+  "Oceania",
+  "World",
+];
   const countryData = cleanData.filter(
-    (el) => !continents.includes(el.country)
-  );
-  return { countryData, continentData };
+  (el) => !continents.includes(el.country)
+);
+
+const continentData = cleanData.filter(
+(el) => continents.includes(el.country)
+);
+
+  return {countryData, continentData};
 };
+
+const cleanInt = (num) => {
+  if (num && num !== 'N/A') {
+  const cleanStringNum = num.replace('+', '');
+  return parseInt(cleanStringNum.split(',').join(''));
+} else return 0;
+}
+
+const getData = data => {
+  return {
+    continent: data.Continent || '/',
+    country: data.country,
+    totalCases: cleanInt(data.TotalCases),
+    newCases: cleanInt(data.NewCases),
+    totalDeaths: cleanInt(data.TotalDeaths),
+    newDeaths: cleanInt(data.NewDeaths),
+    activeCases: cleanInt(data.ActiveCases),
+    casePerPop: cleanInt(data['1 Caseevery X ppl'])
+  }
+}
