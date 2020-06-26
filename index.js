@@ -5,17 +5,11 @@ const cors = require("cors");
 const myql = require('mysql');
 const dbConnection = require('./database');
 
-app.use(
-  cors({
-    origin: process.env.SITE_URL,
-    optionsSuccessStatus: 200,
-  })
-);
+app.use(cors());
 
 app.get("/", (req, res, next) => {
-  res.status(200).json({ success: true });
   updateDatabase();
-  next();
+  res.status(200).json({ success: true });
 });
 
 app.listen(process.env.PORT || 3000, () => {
