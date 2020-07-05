@@ -1,9 +1,9 @@
 const mysql = require('mysql');
 
 module.exports = connection = mysql.createConnection({
-  host: 'fdb22.awardspace.net',
-  user: '3490672_scraper',
-  password: 'escape123',
-  database: '3490672_scraper',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PW,
+  database: process.env.DB_NAME,
   port: 3306
 });

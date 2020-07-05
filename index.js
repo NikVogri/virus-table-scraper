@@ -46,13 +46,13 @@ const updateDatabase = () => {
       dbConnection.connect();
 
       // delete data from the same day
-      dbConnection.query('DELETE FROM countries WHERE DATE(created_at) = CURDATE()',
+      dbConnection.query('DELETE FROM countries WHERE DATE(created_at) = CURDATE() OR DATE(created_at) = CURDATE() - INTERVAL 1 WEEK',
       (err, res) => {
         if (err) throw err;
         console.log("Deleted country data for current day".yellow.inverse);
       });
 
-      dbConnection.query('DELETE FROM continents WHERE DATE(created_at) = CURDATE()',
+      dbConnection.query('DELETE FROM continents WHERE DATE(created_at) = CURDATE() OR DATE(created_at) = CURDATE() - INTERVAL 1 WEEK',
       (err, res) => {
         if (err) throw err;
         console.log("Deleted continent data for current day".yellow.inverse);
